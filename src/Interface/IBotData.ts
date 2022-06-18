@@ -1,6 +1,7 @@
 import { proto } from '@adiwajshing/baileys'
 
 export interface IBotData {
+    presenceTime: any;
     sendMenu: (nome: string) => Promise<proto.WebMessageInfo>;
     sendButton: (mensagem: string, textBtn1: string, textBtn2: string, textBtn3?: string) => Promise<proto.WebMessageInfo>;
     sendText: (ass: boolean, text: string) => Promise<proto.WebMessageInfo>;

@@ -11,7 +11,7 @@ export default async ({ remoteJid, reply, sendText }: IBotData) => {
         mercadopago.configurations.setAccessToken(process.env.MP_ACCESSTOKEN);
 
         var payment_data = {
-            transaction_amount: 1.5,
+            transaction_amount: 15,
             description: '1',
             payment_method_id: 'pix',
             external_reference: remoteJid,

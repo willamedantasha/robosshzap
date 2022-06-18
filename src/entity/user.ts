@@ -5,8 +5,15 @@ export class User {
     dataTeste: string;
     dataPix: string;
     conversation: boolean;
-    question: string;
+    question: Question;
     nome: string;
     operadora: string;
     login: string;
+}
+
+export enum Question {
+    Name,
+    NewName,
+    Operadora,
+    Info
 }

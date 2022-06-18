@@ -1,5 +1,6 @@
 /build
 /node_modules
 /ngrok
+/cache/auth_info.json
 .env
 test.json

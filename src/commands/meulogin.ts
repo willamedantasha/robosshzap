@@ -62,10 +62,10 @@ const criarLogin = async (reply: any, sendText: any, user: User) => {
             });
         });
     }).connect({
-        host: '152.67.60.210',
+        host: process.env.SSH_IPSERVER,
         port: 22,
-        username: 'root',
-        password: '@d3s2a1'
+        username: process.env.SSH_USER,
+        password: process.env.SSH_PASSWORD
     });
 }
 

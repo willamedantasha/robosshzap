@@ -19,15 +19,16 @@ export const getBotData = (
 
   const { remoteJid } = webMessage.key;
 
-  const sendText = async (ass: boolean, text: string) => {
-
-    let assinatura = ass ? `${general.prefixEmoji} *${general.botName}:* \n` : '';
+  const presenceTime = async (delayComposing: number, delayPaused: number) => {
     await socket.presenceSubscribe(remoteJid)
-    await delay(250)
+    await delay(delayComposing)
     await socket.sendPresenceUpdate('composing', remoteJid)
-    await delay(1000)
+    await delay(delayPaused)
     await socket.sendPresenceUpdate('paused', remoteJid)
+  }
 
+  const sendText = async (ass: boolean, text: string) => {
+    let assinatura = ass ? `${general.prefixEmoji} *${general.botName}:* \n` : '';
     return await socket.sendMessage(remoteJid, {
       text: `${assinatura}${text}`,
     });
@@ -76,12 +77,6 @@ export const getBotData = (
   };
 
   const reply = async (text: string) => {
-
-    await socket.presenceSubscribe(remoteJid)
-    await delay(250)
-    await socket.sendPresenceUpdate('composing', remoteJid)
-    await delay(1000)
-    await socket.sendPresenceUpdate('paused', remoteJid)
 
     return await socket.sendMessage(
       webMessage.key.remoteJid,
@@ -192,6 +187,7 @@ export const getBotData = (
   const { command, args } = extractCommandAndArgs(messageText);
 
   return {
+    presenceTime,
     sendButton,
     sendMenu,
     sendText,
