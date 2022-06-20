@@ -2,5 +2,7 @@
 /node_modules
 /ngrok
 /cache/auth_info.json
+/cache/app.apk
 .env
 test.json
+git-comands.png

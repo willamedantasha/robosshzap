@@ -3,7 +3,7 @@ import { IBotData } from "../Interface/IBotData";
 import { readJSON } from "../function";
 const { Client } = require('ssh2');
 import path from "path";
-import { criarUser, updateUser } from "../controllers/userController";
+import { buscarUser, criarUser, updateUser } from "../controllers/userController";
 import { User } from "../entity/user";
 const pathPagamentos = path.join(__dirname, "..", "..", "cache", "pagamentos.json");
 const pathUsers = path.join(__dirname, "..", "..", "cache", "user.json");
@@ -13,24 +13,27 @@ export default async ({ sendText, reply, remoteJid, args }: IBotData) => {
     let login: string;
     let user = readJSON(pathUsers).find(value => value.remoteJid === remoteJid)
 
-    if (user) {
-        login = user.nome.replace(/\s/g, '').toLowerCase();
-    } else {
-        if (args.length < 5) {
+    if (args) {
+        console.log('Entrou args')
+        if (args.length < 8) {
             return await reply("▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n      ❌ Erro ao criar seu login ❌\n▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n \nEnvie a mensagem conforme o exemplo.\nex.: _#menu nomesobrenome_");
         }
         login = args.replace(/\s/g, '').toLowerCase();
+    } else if(user) {
+        login = user.nome.replace(/\s/g, '').toLowerCase();
+    } else {
+        return await reply("▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n      ❌ Erro ao criar seu login ❌\n▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n \nEnvie a mensagem conforme o exemplo.\nex.: _#menu nomesobrenome_");
     }
 
     let pagamentos = readJSON(pathPagamentos)
     let pagamento = pagamentos.find(value => value.remoteJid === remoteJid);
 
     if (pagamento) {
-        let users = readJSON(pathUsers)
-        let isUserCriar = users.find(value => value.idPgto === pagamento.idPgto)
+        let user = buscarUser(remoteJid);
+        let isUserCriar = user.idPgto.includes(pagamento.idPgto)
 
         if (!isUserCriar) {
-            user.idPgto = pagamento.idPgto;
+            user.idPgto.push(pagamento.idPgto);
             user.login = login;
             await removerPagamento(remoteJid);
             return await criarLogin(reply, sendText, user);

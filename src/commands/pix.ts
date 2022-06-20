@@ -5,6 +5,8 @@ import { IBotData } from "../Interface/IBotData";
 export default async ({ remoteJid, reply, sendText }: IBotData) => {
 
     let user = buscarUser(remoteJid);
+    let valor = user.isAdmin ? 7.5 : 15;
+    console.log('Valor '+valor);
 
     if (user && isCriarPix(user.dataPix)) {
         var mercadopago = require('mercadopago');

@@ -1,5 +1,5 @@
 export class User {
-    idPgto : string;
+    idPgto : number[];
     remoteJid : string;
     dataCriacao: string;
     dataTeste: string;

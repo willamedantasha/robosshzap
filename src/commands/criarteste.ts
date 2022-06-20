@@ -4,28 +4,22 @@ import { buscarUser, criarUser, updateUser } from "../controllers/userController
 import { User } from "../entity/user";
 const { Client } = require('ssh2');
 
-export default async ({ sendText, reply, remoteJid }: IBotData) => {
-
+export default async ({ sendText, sendApk, reply, remoteJid }: IBotData) => {
     let user = buscarUser(remoteJid)
     if (user) {
         if (isCriarTeste(user.dataTeste) || user.isAdmin) {
             user.dataTeste = new Date().toLocaleString();
             await updateUser(user)
-            await criarLogin(reply, sendText)
+            await criarLogin(reply, sendText,sendApk)
         } else {
-            await reply('❌ Não foi possivel criar seu teste. \nSó pode criar 1 teste a cada 24h.');
+            await reply('❌ Não foi possível criar seu teste.\nLogo um atendente irar lhe ajudar!');
         }
-    } else {
-        let newUser = new User();
-        newUser.remoteJid = remoteJid;
-        newUser.dataCriacao = new Date().toLocaleString();
-        newUser.dataTeste = new Date().toLocaleString();
-        await criarUser(newUser)
-        await criarLogin(reply, sendText)
+    } else{
+        await reply('❌ Não foi possível criar seu teste, você não possui cadastro.');
     }
 };
 
-const criarLogin = async (reply: any, sendText: any) => {
+const criarLogin = async (reply: any, sendText: any, sendApk: any) => {
     var conn = new Client();
     conn.on('ready', function () {
         conn.exec('./teste.sh', function (err, stream) {
@@ -35,6 +29,7 @@ const criarLogin = async (reply: any, sendText: any) => {
             }).on('data', function (data) {
                 sendText(true,data);
                 sendText(false,'Aplicativo\nhttps://play.google.com/store/apps/details?id=com.netstar.movel');
+                sendApk();
             }).stderr.on('data', function (data) {
                 reply('❌Erro ao gerar seu teste, contate o administrador.')
             });

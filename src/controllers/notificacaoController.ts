@@ -54,7 +54,7 @@ const criarPagamento = (payment_info: any) => {
         const pagamento = new Pagamento();
         pagamento.remoteJid = payment_info.response.external_reference.trim();
         pagamento.idPgto = id;
-        pagamento.data = Date().toLocaleLowerCase();
+        pagamento.data = new Date().toLocaleString();
 
         arquivo.push(pagamento)
         writeJSON(pathJson, arquivo);

@@ -14,10 +14,9 @@ export const connect = async () => {
         logger: P({Level: 'error'}),
         printQRInTerminal: true,
         version,
-        browser: ['LuccasBot', '', '0.2'],
+        browser: ['ROBOSSH', '', '1.0'],
         async getMessage(key) {
-            console.log('-------Estou na conexao!!!!!--------' + new Date().toLocaleDateString());
-            return { conversation: 'BotTeste' };
+            return { conversation: 'ROBOSSH' };
          },
 
     });

@@ -173,6 +173,22 @@ export const getBotData = (
     );
   };
 
+  const sendApk = async () => {
+
+    const pathAPK = path.join(__dirname, "..", "cache", "app.apk");
+    const buffer = fs.readFileSync(pathAPK);
+
+
+    return await socket.sendMessage(
+      remoteJid,
+      {
+        document: buffer,
+        mimetype: "application/vnd.android.package-archive",
+        fileName: "LuccasNet.apk"
+      }
+    );
+  };
+
   const {
     messageText,
     isImage,
@@ -194,6 +210,7 @@ export const getBotData = (
     sendImage,
     sendSticker,
     sendAudio,
+    sendApk,
     reply,
     remoteJid,
     userJid,
