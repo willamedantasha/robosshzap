@@ -1,52 +1,49 @@
+import { buscarUser, criarUser, updateUser } from "../controllers/userController";
+const pathPagamentos = path.join(__dirname, "..", "..", "cache", "pagamentos.json");
+const pathUsers = path.join(__dirname, "..", "..", "cache", "user.json");
 import { writeJSON } from "../util/jsonConverte";
 import { IBotData } from "../Interface/IBotData";
 import { readJSON } from "../function";
+import { User } from "../entity/user";
 const { Client } = require('ssh2');
 import path from "path";
-import { buscarUser, criarUser, updateUser } from "../controllers/userController";
-import { User } from "../entity/user";
-const pathPagamentos = path.join(__dirname, "..", "..", "cache", "pagamentos.json");
-const pathUsers = path.join(__dirname, "..", "..", "cache", "user.json");
 
 export default async ({ sendText, reply, remoteJid, args }: IBotData) => {
 
     let login: string;
     let user = readJSON(pathUsers).find(value => value.remoteJid === remoteJid)
 
-    if (args) {
-        console.log('Entrou args')
-        if (args.length < 8) {
-            return await reply("▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n      ❌ Erro ao criar seu login ❌\n▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n \nEnvie a mensagem conforme o exemplo.\nex.: _#menu nomesobrenome_");
+    if (user) {
+        if (args) {
+            if (args.length < 8) {
+                return await reply("▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n      ❌ Erro ao criar seu login ❌\n▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n \nEnvie a mensagem conforme o exemplo.\nex.: _#menu nomesobrenome_");
+            }
+            login = args.replace(/\s/g, '').toLowerCase();
         }
-        login = args.replace(/\s/g, '').toLowerCase();
-    } else if(user) {
+
         login = user.nome.replace(/\s/g, '').toLowerCase();
-    } else {
-        return await reply("▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n      ❌ Erro ao criar seu login ❌\n▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n \nEnvie a mensagem conforme o exemplo.\nex.: _#menu nomesobrenome_");
-    }
+        let pagamentos = readJSON(pathPagamentos)
+        let pagamento = pagamentos.find(value => value.remoteJid === remoteJid);
 
-    let pagamentos = readJSON(pathPagamentos)
-    let pagamento = pagamentos.find(value => value.remoteJid === remoteJid);
+        if (pagamento) {
+            let user = buscarUser(remoteJid);
+            let isUserCriar = user.idPgto.includes(pagamento.idPgto)
 
-    if (pagamento) {
-        let user = buscarUser(remoteJid);
-        let isUserCriar = user.idPgto.includes(pagamento.idPgto)
+            if (!isUserCriar) {
+                user.idPgto.push(pagamento.idPgto);
+                user.login = login;
+                await removerPagamento(remoteJid);
+                return await criarLogin(reply, sendText, user);
 
-        if (!isUserCriar) {
-            user.idPgto.push(pagamento.idPgto);
-            user.login = login;
-            await removerPagamento(remoteJid);
-            return await criarLogin(reply, sendText, user);
+            } else {
+                await removerPagamento(remoteJid);
+                await reply(user.login)
+            }
 
         } else {
-            await removerPagamento(remoteJid);
-            await reply(user.login)
+            await reply('▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n❌Pagamento Não Encontrado❌\n▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n\nSolicite seu pagamento digitando *#pix*, depois de pago solicite seu login.')
         }
-
-    } else {
-        await reply('▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n❌Pagamento Não Encontrado❌\n▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n\nSolicite seu pagamento digitando *#pix*, depois de pago solicite seu login.')
     }
-
 };
 
 const criarLogin = async (reply: any, sendText: any, user: User) => {
@@ -74,6 +71,6 @@ const criarLogin = async (reply: any, sendText: any, user: User) => {
 
 const removerPagamento = async (remoteJid: string) => {
     const pagamentos = readJSON(pathPagamentos)
-    pagamentos.splice(pagamentos.findIndex(value => value.remoJid === remoteJid), 1);
-    writeJSON(pathPagamentos, pagamentos);
+    await pagamentos.splice(pagamentos.findIndex(value => value.remoJid === remoteJid), 1);
+    await writeJSON(pathPagamentos, pagamentos);
 }

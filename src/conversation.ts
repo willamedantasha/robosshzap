@@ -1,22 +1,10 @@
-import { delay } from "@adiwajshing/baileys";
-import { criarUser, updateUser } from "./controllers/userController";
+import { updateUser } from "./controllers/userController";
 import { Question, User } from "./entity/user";
 import { clearEmotionAndEspace } from "./function";
 
 export const conversation = async (user: User, data: any) => {
 
-    if (!user) {
-        let newUser = new User();
-        newUser.dataCriacao = new Date().toLocaleString();
-        newUser.remoteJid = data.remoteJid;
-        newUser.conversation = true;
-        newUser.nome = clearEmotionAndEspace(data.webMessage.pushName);
-        newUser.question = Question.Name;
-        await criarUser(newUser);
-        await data.sendText(false, 'Olá, seja bem vindo à *LuccasNet*.\n \nMeu nome é *LuccasBot* sou um assistente virtual, nesse primeiro momento siga as instruções para pesornalizar seu atendimento.')
-        await data.presenceTime(1000, 2000);
-        await data.sendButton(`Posso lhe chamar por *${newUser.nome}*?`, 'Sim', 'Não');
-    } else if (user.conversation) {
+    if (user.conversation) {
         let buttonId = data.webMessage.message?.buttonsResponseMessage?.selectedButtonId;
         switch (user.question) {
             case Question.Name:

@@ -9,6 +9,7 @@ export class User {
     nome: string;
     operadora: string;
     login: string;
+    acesso: Acesso;
 }
 
 export enum Question {
@@ -16,4 +17,9 @@ export enum Question {
     NewName,
     Operadora,
     Info
+}
+
+export enum Acesso {
+    revenda,
+    usuario
 }
