@@ -15,6 +15,8 @@ export default async ({ sendText, reply, remoteJid, args }: IBotData) => {
     let user = readJSON(pathUsers).find(value => value.remoteJid === remoteJid)
 
     if (user) {
+        
+        login = user.nome.replace(/\s/g, '').toLowerCase();
         if (args) {
             if (args.length < 8) {
                 return await reply("▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n      ❌ Erro ao criar seu login ❌\n▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n \nEnvie a mensagem conforme o exemplo.\nex.: _#menu nomesobrenome_");
@@ -22,7 +24,6 @@ export default async ({ sendText, reply, remoteJid, args }: IBotData) => {
             login = args.replace(/\s/g, '').toLowerCase();
         }
 
-        login = user.nome.replace(/\s/g, '').toLowerCase();
         let pagamentos = readJSON(pathPagamentos)
         let pagamento = pagamentos.find(value => value.remoteJid === remoteJid);
 
@@ -35,8 +36,6 @@ export default async ({ sendText, reply, remoteJid, args }: IBotData) => {
                 isUserCriar = false
                 user.idPgto = []
             }
-
-            console.log(isUserCriar)
 
             if (!isUserCriar) {
                 user.idPgto.push(pagamento.idPgto);
