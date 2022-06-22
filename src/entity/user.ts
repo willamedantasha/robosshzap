@@ -13,13 +13,13 @@ export class User {
 }
 
 export enum Question {
-    Name,
-    NewName,
-    Operadora,
-    Info
+    Name = 'nome',
+    NewName = 'novoNome',
+    Operadora = 'operadora',
+    Info = 'info'
 }
 
 export enum Acesso {
-    revenda,
-    usuario
+    revenda = 'revenda',
+    usuario = 'usuario'
 }

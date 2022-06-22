@@ -34,7 +34,7 @@ export const notificacaopix = async (req, res) => {
         if (details && payment_info.response.status === 'approved') {
             criarPagamento(payment_info);
         } else {
-            console.log('Não pode criar login, estou dentro do notifica controller.')
+            console.log('Não pode criar login.')
         }
     }
 

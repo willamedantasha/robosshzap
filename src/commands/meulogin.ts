@@ -1,12 +1,13 @@
 import { buscarUser, criarUser, updateUser } from "../controllers/userController";
-const pathPagamentos = path.join(__dirname, "..", "..", "cache", "pagamentos.json");
-const pathUsers = path.join(__dirname, "..", "..", "cache", "user.json");
 import { writeJSON } from "../util/jsonConverte";
 import { IBotData } from "../Interface/IBotData";
 import { readJSON } from "../function";
 import { User } from "../entity/user";
-const { Client } = require('ssh2');
 import path from "path";
+
+const { Client } = require('ssh2');
+const pathUsers = path.join(__dirname, "..", "..", "cache", "user.json");
+const pathPagamentos = path.join(__dirname, "..", "..", "cache", "pagamentos.json");
 
 export default async ({ sendText, reply, remoteJid, args }: IBotData) => {
 

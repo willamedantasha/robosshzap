@@ -4,5 +4,6 @@
 /cache/auth_info.json
 /cache/app.apk
 .env
-test.json
+teste.ts
+teste.sh
 git-comands.png
