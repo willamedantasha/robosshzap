@@ -1,4 +1,4 @@
-import { buscarUser, criarUser, updateUser } from "../controllers/userController";
+import { buscarUser, updateUser } from "../controllers/userController";
 import { writeJSON } from "../util/jsonConverte";
 import { IBotData } from "../Interface/IBotData";
 import { readJSON } from "../function";
@@ -27,8 +27,16 @@ export default async ({ sendText, reply, remoteJid, args }: IBotData) => {
         let pagamento = pagamentos.find(value => value.remoteJid === remoteJid);
 
         if (pagamento) {
-            let user = buscarUser(remoteJid);
-            let isUserCriar = user.idPgto.includes(pagamento.idPgto)
+            let user: User = buscarUser(remoteJid);
+            let isUserCriar = user.idPgto?.includes(pagamento.idPgto)
+            
+            //setar valor padrao para a variavel.
+            if(isUserCriar === undefined){
+                isUserCriar = false
+                user.idPgto = []
+            }
+
+            console.log(isUserCriar)
 
             if (!isUserCriar) {
                 user.idPgto.push(pagamento.idPgto);
