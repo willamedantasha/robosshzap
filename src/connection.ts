@@ -1,6 +1,7 @@
-import makeWASocket, { DisconnectReason, fetchLatestBaileysVersion, useSingleFileAuthState } from "@adiwajshing/baileys";
+import makeWASocket, { DisconnectReason, fetchLatestBaileysVersion, useSingleFileAuthState, WAMessageStatus } from "@adiwajshing/baileys";
 import { Boom } from "@hapi/boom";
 import path from 'path'
+import { pid } from 'node:process';
 const P = require('pino')
 
 export const connect = async () => {
@@ -21,13 +22,15 @@ export const connect = async () => {
 
     });
 
+    WAMessageStatus
+
     socket.ev.on('connection.update', async(update) =>{
         const {connection, lastDisconnect} = update;
         if(connection === "close"){
             const shoudReconnection = (lastDisconnect?.error as Boom)?.output?.statusCode !== 
             DisconnectReason.loggedOut;
-
             if(shoudReconnection){
+                process.kill(pid);
                 await connect();
             }
         }

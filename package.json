@@ -1,6 +1,6 @@
 {
-  "name": "robo_zap",
-  "version": "0.0.1",
+  "name": "robossh",
+  "version": "0.1.0",
   "description": "",
   "main": "index.js",
   "scripts": {

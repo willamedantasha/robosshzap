@@ -10,6 +10,7 @@ export class User {
     operadora: string;
     login: string;
     acesso: Acesso;
+    credito: number;
 }
 
 export enum Question {

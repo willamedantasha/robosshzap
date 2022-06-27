@@ -3,9 +3,10 @@ import { readJSON } from "../function";
 import path from "path";
 import { Acesso } from "../entity/user";
 import { updateUser } from "../controllers/userController";
+import { StringsMsg } from "../util/stringsMsg";
 
-export default async ({webMessage, remoteJid, reply}: IBotData) => {
-    if(webMessage.key.fromMe){
+export default async ({webMessage, remoteJid, reply, owner}: IBotData) => {
+    if(owner){
         const pathUsers = path.join(__dirname, "..", "..", "cache", "user.json");
         let user = readJSON(pathUsers).find(value => value.remoteJid === remoteJid)
         if(user){
@@ -19,9 +20,9 @@ export default async ({webMessage, remoteJid, reply}: IBotData) => {
                 await reply("❎ Acesso de revendedor removido!");
             }
         } else {
-            reply("❌ Usuário não cadastrado!")
+            reply(StringsMsg.errorUser)
         }
     } else {
-        reply("⭕ Acesso negado, você não pode executar esse comando!");
+        reply(StringsMsg.acessoInvalido);
     }
 };

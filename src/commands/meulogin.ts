@@ -1,84 +1,59 @@
-import { buscarUser, updateUser } from "../controllers/userController";
+import { updateUser } from "../controllers/userController";
 import { writeJSON } from "../util/jsonConverte";
 import { IBotData } from "../Interface/IBotData";
 import { readJSON } from "../function";
 import { User } from "../entity/user";
 import path from "path";
+import { StringsMsg } from "../util/stringsMsg";
 
 const { Client } = require('ssh2');
 const pathUsers = path.join(__dirname, "..", "..", "cache", "user.json");
-const pathPagamentos = path.join(__dirname, "..", "..", "cache", "pagamentos.json");
 
 export default async ({ sendText, reply, remoteJid, args }: IBotData) => {
-
-    let login: string;
-    let user = readJSON(pathUsers).find(value => value.remoteJid === remoteJid)
-
+    let user: User = readJSON(pathUsers).find(value => value.remoteJid === remoteJid)
     if (user) {
-        
-        login = user.nome.replace(/\s/g, '').toLowerCase();
+        let credito : number = user.credito ? user.credito : 0;
+        if(credito <= 0) {
+            reply(StringsMsg.errorSaldo)
+            return
+        }
+        user.login = user.nome.replace(/\s/g, '').toLowerCase();
         if (args) {
             if (args.length < 8) {
-                return await reply("▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n      ❌ Erro ao criar seu login ❌\n▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n \nEnvie a mensagem conforme o exemplo.\nex.: _#menu nomesobrenome_");
+                return await reply(StringsMsg.errorLoginSize);
             }
-            login = args.replace(/\s/g, '').toLowerCase();
+            user.login = args.replace(/\s/g, '').toLowerCase();
         }
-
-        let pagamentos = readJSON(pathPagamentos)
-        let pagamento = pagamentos.find(value => value.remoteJid === remoteJid);
-
-        if (pagamento) {
-            let user: User = buscarUser(remoteJid);
-            let isUserCriar = user.idPgto?.includes(pagamento.idPgto)
-            
-            //setar valor padrao para a variavel.
-            if(isUserCriar === undefined){
-                isUserCriar = false
-                user.idPgto = []
-            }
-
-            if (!isUserCriar) {
-                user.idPgto.push(pagamento.idPgto);
-                user.login = login;
-                await removerPagamento(remoteJid);
-                return await criarLogin(reply, sendText, user);
-
-            } else {
-                await removerPagamento(remoteJid);
-                await reply(user.login)
-            }
-
-        } else {
-            await reply('▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n❌Pagamento Não Encontrado❌\n▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n\nSolicite seu pagamento digitando *#pix*, depois de pago solicite seu login.')
-        }
+        criarLogin(reply, sendText, user);
+    } else {
+        await reply(StringsMsg.errorUser);
     }
 };
 
-const criarLogin = async (reply: any, sendText: any, user: User) => {
+const criarLogin = (reply: any, sendText: any, user: User) => {
     var conn = new Client();
     conn.on('ready', function () {
-        conn.exec(`./criarusuariopremium.sh ${user.login}`, function (err, stream) {
+        conn.exec(`./createUser.sh ${user.login}`, function (err, stream) {
             if (err) throw err;
             stream.on('close', function (code, signal) {
                 conn.end();
             }).on('data', function (data) {
-                user.login = data.toString();
+                let res = data.toString();
+                if(res.includes('Erro')){
+                    reply(res)
+                    return
+                }
+                user.credito -= 1
                 updateUser(user)
                 sendText(true, data)
             }).stderr.on('data', function (data) {
-                reply('❌Erro ao gerar seu teste, contate o administrador.')
+                reply(StringsMsg.errorLogin)
             });
         });
     }).connect({
-        host: process.env.SSH_IPSERVER,
+        host: process.env.SSH_HOST,
         port: 22,
         username: process.env.SSH_USER,
         password: process.env.SSH_PASSWORD
     });
-}
-
-const removerPagamento = async (remoteJid: string) => {
-    const pagamentos = readJSON(pathPagamentos)
-    await pagamentos.splice(pagamentos.findIndex(value => value.remoJid === remoteJid), 1);
-    await writeJSON(pathPagamentos, pagamentos);
 }

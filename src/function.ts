@@ -10,11 +10,13 @@ import fs from "fs";
 import { writeFile } from "fs/promises";
 import path from "path";
 import { general } from "./configuration/general";
+import { User } from "./entity/user";
 import { IBotData } from "./Interface/IBotData";
 
 export const getBotData = (
   socket: any,
-  webMessage: proto.IWebMessageInfo
+  webMessage: proto.IWebMessageInfo,
+  user?: User
 ): IBotData => {
 
   const { remoteJid } = webMessage.key;
@@ -58,7 +60,7 @@ export const getBotData = (
     const sections = [
       {
         rows: [
-          { title: "Criar Teste", rowId: "#criarteste" },
+          { title: "Criar Teste", rowId: "#teste" },
           { title: "Solicitar Pix", rowId: "#pix" },
           { title: "Meu Login", rowId: "#meulogin" },
         ]
@@ -198,6 +200,7 @@ export const getBotData = (
     isDocument,
     userJid,
     replyJid,
+    owner
   } = extractDataFromWebMessage(webMessage);
 
   const { command, args } = extractCommandAndArgs(messageText);
@@ -216,6 +219,7 @@ export const getBotData = (
     userJid,
     replyJid,
     socket,
+    user,
     webMessage,
     command,
     args,
@@ -224,7 +228,8 @@ export const getBotData = (
     isSticker,
     isAudio,
     isDocument,
-    messageText
+    messageText,
+    owner
   };
 };
 
@@ -303,6 +308,7 @@ export const writeJSON = (pathFile: string, data: any) => {
 export const extractDataFromWebMessage = (message: proto.IWebMessageInfo) => {
   let remoteJid: string;
   let messageText: string | null | undefined;
+  let owner: boolean = message.key?.fromMe;
 
   let isReply = false;
 
@@ -398,6 +404,7 @@ export const extractDataFromWebMessage = (message: proto.IWebMessageInfo) => {
     isVideo,
     isDocument,
     mentionedJid,
+    owner,
     webMessage: message,
   };
 };

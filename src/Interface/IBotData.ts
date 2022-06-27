@@ -1,4 +1,5 @@
 import { proto } from '@adiwajshing/baileys'
+import { User } from '../entity/user';
 
 export interface IBotData {
     presenceTime: any;
@@ -23,6 +24,6 @@ export interface IBotData {
     args: string;
     userJid: string;
     messageText: string;
-
-
+    user: User;
+    owner: boolean;
 }

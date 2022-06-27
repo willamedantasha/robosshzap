@@ -1,18 +1,19 @@
 import { readJSON, writeJSON } from "../function";
 import path from "path";
-import { Pagamento } from "../entity/pagamento";
+import { updateUser } from "./userController";
+import { User } from "../entity/user";
 
 const P = require('pino')
+const pathUsers = path.join(__dirname, "..", "..", "cache", "user.json");
 
 export const notificacaopix = async (req, res) => {
     const dados = req.query;
-
     if (!dados.hasOwnProperty('data.id') && !dados.hasOwnProperty('type')) {
         console.log('Erro no envio dos parametros da notificação!')
-        return res.status(400)
+        res.status(400);
+        return;
     }
     let payment_info;
-
     //faz a consulta na api para verificar os pagamentos
     if (dados['type'] === 'payment') {
         try {
@@ -21,44 +22,45 @@ export const notificacaopix = async (req, res) => {
             payment_info = await mercadopago.payment.get(dados['data.id'])
         } catch (error) {
             console.log('Log: Erro ao consultar api do mercado pago!\n' + error);
-            return res.status(400)
+            res.status(400);
+            return;
         }
     } else {
-        return res.status(400)
+        res.status(400);
+        return;
     }
-
     //verifica se o pagamento está aprovado
     if (payment_info.status === 200 && payment_info.response.status !== 'pending') {
         let details = payment_info.response.transaction_details.transaction_id;
 
         if (details && payment_info.response.status === 'approved') {
-            criarPagamento(payment_info);
+            let remoteJid = payment_info.response.external_reference.trim();
+            let user : User = readJSON(pathUsers).find(value => value.remoteJid === remoteJid)
+            //verifica se este pagamento já foi concluido.
+            let isPayment = user.idPgto?.includes(payment_info.response.id)
+            if (isPayment === undefined) {
+                isPayment = false;
+                user.idPgto = [];
+            }
+            if (isPayment) {
+                console.log('Pagamento já processado.')
+                res.status(400);
+                return;
+            }
+
+            let credito: number = 0;
+            if (user?.credito) {
+                credito = user.credito;
+            }
+            credito += 1
+            user.idPgto.push(payment_info.response.id); 
+            user.credito = credito;
+            updateUser(user)
         } else {
             console.log('Não pode criar login.')
         }
     }
-
-    return res.status(200)
-}
-
-const criarPagamento = (payment_info: any) => {
-
-    const pathJson = path.join(__dirname, "..", "..", "cache", "pagamentos.json");
-    let arquivo = readJSON(pathJson)
-    let id = payment_info.response.id;
-
-    let isCriarPgto = arquivo.find(value => value.idPgto === id);
-
-
-    if (!isCriarPgto) {
-        const pagamento = new Pagamento();
-        pagamento.remoteJid = payment_info.response.external_reference.trim();
-        pagamento.idPgto = id;
-        pagamento.data = new Date().toLocaleString();
-
-        arquivo.push(pagamento)
-        writeJSON(pathJson, arquivo);
-    }
-
+    res.status(400);
+    return;
 }
 

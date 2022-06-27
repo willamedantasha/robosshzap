@@ -29,10 +29,10 @@ export default async () => {
             return;
         }
 
-        const { command, ...data } = getBotData(socket, webMessage);
+        let user : User = readJSON(pathUsers).find(value => value.remoteJid === webMessage.key.remoteJid)
+        const { command, ...data } = getBotData(socket, webMessage, user);
 
         if(!webMessage.key.fromMe){
-            let user = readJSON(pathUsers).find(value => value.remoteJid === data.remoteJid)
             if (!user) {
                 let newUser = new User();
                 newUser.dataCriacao = new Date().toLocaleString();
@@ -41,6 +41,7 @@ export default async () => {
                 newUser.nome = clearEmotionAndEspace(data.webMessage.pushName);
                 newUser.question = Question.Name;
                 newUser.acesso = Acesso.usuario;
+                newUser.credito = 0;
                 await criarUser(newUser);
                 await data.sendText(false, 'Olá, seja bem vindo à *LuccasNet*.\n \nMeu nome é *LuccasBot* sou um assistente virtual, nesse primeiro momento siga as instruções para pesornalizar seu atendimento.')
                 await data.presenceTime(1000, 2000);
@@ -52,11 +53,13 @@ export default async () => {
 
         if (!isCommand(command)) return;
 
-        try {
-            const action = await getCommand(command.replace(general.prefix, ""));
-            await action({ command, ...data });
-        } catch (error) {
-            console.log('Log_bot: ' + error);
+        if ((user && !user?.conversation) || webMessage.key.fromMe) {
+            try {
+                const action = await getCommand(command.replace(general.prefix, ""));
+                await action({ command, ...data });
+            } catch (error) {
+                console.log('Log_bot: ' + error);
+            }
         }
     });
 };
