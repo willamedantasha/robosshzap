@@ -23,6 +23,6 @@ export default async ({webMessage, remoteJid, reply, owner}: IBotData) => {
             reply(StringsMsg.errorUser)
         }
     } else {
-        reply(StringsMsg.acessoInvalido);
+        reply(StringsMsg.acessoNegado);
     }
 };
