@@ -1,6 +1,6 @@
 #!/bin/bash
 username=$1
-password=$((RANDOM% + 99999))
+password=$2
 dias=30
 sshlimiter=1
 
@@ -34,4 +34,4 @@ useradd -e $final -M -s /bin/false -p $pass $username > /dev/null 2>&1
 (echo "$password"; echo "$password") | passwd $username > /dev/null 2>&1
 echo "$password" > /etc/SSHPlus/senha/$username
 echo "$username $sshlimiter" >> /root/usuarios.db
-echo "$(echo -e "▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n         ✅ *USUÁRIO CRIADA* ✅\n▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n     👤 USUARIO: $username \n     🔑 SENHA: $password \n     ⏰ Expira em: $vencimento \n ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬")"
+echo "$(echo -e "▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n         ✅ *USUÁRIO CRIADA* ✅\n▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n     👤 USUARIO: $username \n     🔑 SENHA: $password \n     ⏰ Expira em: $vencimento \n▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬")"

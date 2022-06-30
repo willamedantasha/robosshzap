@@ -63,6 +63,8 @@ export const getBotData = (
           { title: "Criar Teste", rowId: "#teste" },
           { title: "Solicitar Pix", rowId: "#pix" },
           { title: "Meu Login", rowId: "#meulogin" },
+          { title: "Renovar Login", rowId: "#renovar" },
+          { title: "Consultar Login", rowId: "#info" },
         ]
       },
     ]

@@ -1,9 +1,9 @@
-import { updateUser } from "../controllers/userController";
-import { IBotData } from "../Interface/IBotData";
-import { StringsMsg } from "../util/stringsMsg";
-import { readJSON } from "../function";
 import { User } from "../entity/user";
+import { IBotData } from "../Interface/IBotData";
 import path from "path";
+import { readJSON } from "../function";
+import { StringsMsg } from "../util/stringsMsg";
+import { updateUser } from "../controllers/userController";
 import { StringClean } from "../util/stringClean";
 
 const { Client } = require('ssh2');
@@ -17,24 +17,22 @@ export default async ({ sendText, reply, remoteJid, args }: IBotData) => {
             reply(StringsMsg.errorSaldo)
             return
         }
-        user.login = StringClean(user.nome);
         if (args) {
             if (args.length < 8) {
                 return await reply(StringsMsg.errorLoginSize);
             }
             user.login = StringClean(args);
         }
-        user.senha = getRandomPassword();
-        criarLogin(reply, sendText, user);
+        updateLogin(reply, sendText, user);
     } else {
         await reply(StringsMsg.errorUser);
     }
 };
 
-const criarLogin = (reply: any, sendText: any, user: User) => {
+const updateLogin = (reply: any, sendText: any, user: User) => {
     var conn = new Client();
     conn.on('ready', function () {
-        conn.exec(`./createUser.sh ${user.login} ${user.senha}`, function (err, stream) {
+        conn.exec(`./updateUser.sh ${user.login}`, function (err, stream) {
             if (err) throw err;
             stream.on('close', function (code, signal) {
                 conn.end();
@@ -61,7 +59,7 @@ const criarLogin = (reply: any, sendText: any, user: User) => {
     if (process.env.SSH_BACKUP) {
         var conn_bkp = new Client();
         conn_bkp.on('ready', function () {
-            conn_bkp.exec(`./createUser.sh ${user.login}  ${user.senha}`, function (err, stream) {
+            conn_bkp.exec(`./updateUser.sh ${user.login}`, function (err, stream) {
                 if (err) throw err;
                 stream.on('close', function (code, signal) {
                     conn_bkp.end();
@@ -83,10 +81,4 @@ const criarLogin = (reply: any, sendText: any, user: User) => {
             password: process.env.SSH_BACKUP_PASSWORD
         });
     }
-}
-
-const getRandomPassword = (): string => {
-    let min = Math.ceil(1000);
-    let max = Math.floor(9999);
-    return String(Math.floor(Math.random() * (max - min + 1)) + min);
 }

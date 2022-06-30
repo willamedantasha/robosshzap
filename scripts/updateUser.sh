@@ -33,7 +33,7 @@ else
             exit 1
         fi
     else
-        echo "Erro: ❌O usuário $user não existe!"
+        echo "Erro: ❌O usuário $user não existe! \n_Solicite um novo login digitando #meulogin_"
         exit 1
     fi
 fi

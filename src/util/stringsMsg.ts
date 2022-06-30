@@ -4,9 +4,9 @@ export class StringsMsg {
     static errorLogin: string = '▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n          ❌ *LOGIN INVÁLIDO* ❌\n▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n \nErro ao gerar seu login, tente novamente mais tarde!';
     static errorPagamentoInvalido: string = '▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n   ❌ *PAGAMENTO INVÁLIDO* ❌\n▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n \nSolicite seu pagamento digitando *#pix*, depois de pago solicite seu login.'
     static errorPagamento: string = '▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n   ❌ *PAGAMENTO INVÁLIDO* ❌\n▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n \nErro ao gerar seu pagamento. Principais problemas gateway fora do ar ou você já gerou um pagamento hoje.'
-    static errorSaldo: string = '▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n      ⭕ *SALDO INSUFICIENTE* ⭕\n▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n \nVocê está sem saldo para gerar login, faça um pagamento por *#pix*';
+    static errorSaldo: string = '▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n      ⭕ *SALDO INSUFICIENTE* ⭕\n▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n \nVocê está sem saldo para executar essa ação, faça um pagamento solicitando *#pix*';
     static acessoNegado: string = '▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n         ⭕ *ACESSO NEGADO* ⭕\n▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n \nVocê não tem permissão para executar esse comando!';
-    static errorArgs: string = '▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n      ❌ *COMANDO INVÁLIDO* ❌\n▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n \nNão foi possível executar seu comando, favor envie novamento com argumentos válidos!';
+    static errorArgs: string = '▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n      ❌ *COMANDO INVÁLIDO* ❌\n▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n \nNão foi possível executar esse comando, digitou argumento inválido!';
     static recarga: string = '▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n     ✅ *RECARGA CONCLUÍDA* ✅\n▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n \nSeu novo saldo de credito: ';
     static aplicativo: string = 'Faça o dowload do aplicativo para conexão:\nhttps://play.google.com/store/apps/details?id=com.netstar.movel';
     static pix: string = 'Cópie o codigo acima para realizar o pagamento via pix, após o pagamento mande mensagem *#meulogin* para receber seu login de 30 dias.';

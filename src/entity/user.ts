@@ -1,14 +1,15 @@
 export class User {
-    idPgto : number[];
+    nome: string;
+    login: string;
+    senha: string;
     remoteJid : string;
+    operadora: string;
     dataCriacao: string;
     dataTeste: string;
     dataPix: string;
+    idPgto : number[];
     conversation: boolean;
     question: Question;
-    nome: string;
-    operadora: string;
-    login: string;
     acesso: Acesso;
     credito: number;
 }
